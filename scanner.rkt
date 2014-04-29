@@ -28,7 +28,7 @@
     [(_ character) #'(lambda (result lst)
                        (if (empty? lst) empty (if (equal? (first lst) character) (list (list (cons character result) (rest lst))) empty)))]))
 
-(define-syntax (regular-expression stx)
+(define-syntax (regular-expression stx) 
   (syntax-case stx ()
     [(_ rgx ...)
      #'(lambda (lst)
