@@ -472,3 +472,30 @@ a block comment*/"))
 
 
 ;;TODO : See if we can't error out obvious cases like unclosed block comments
+
+;;A simple test: A Java GCD program!
+(java-scanner (string->list
+                 "import java.lang.Object;
+
+public class Program
+{
+public static int Gcd(int x, int y)
+{
+if (y > x)
+{
+return Gcd(y, x);
+}
+else if (y == 0)
+{
+return x;
+}
+else
+{
+return Gcd(y, x % y);
+}
+}
+public static void Main()
+{
+Gcd(7, 11);
+}
+}"))
