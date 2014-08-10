@@ -10,6 +10,11 @@
 
 (struct regex-star (regex))
 
+(define not-empty? (compose not empty?))
+(define filter-empty (curry filter (compose not empty?))) 
+
+
+
 (define (regex-helper rgx)
   (define epsilon (lambda (result lst) (list (list result lst))))
   (match rgx
@@ -20,7 +25,7 @@
        [(empty? regexes) epsilon]
        [else
         (lambda (result lst)
-          (let ([set (filter (compose not empty?) ((regex-helper (first regexes)) result lst))])
+          (let ([set (filter-empty ((regex-helper (first regexes)) result lst))])
             (if (empty? set) empty (apply append (map (curry apply (regex-helper (regex-and (rest regexes)))) set)))))])]
     [(regex-or regexes)
      (lambda (result lst)
@@ -28,7 +33,7 @@
     [(regex-star regex) (let ([g (regex-helper regex)])
                           (lambda (result lst)
                             (cons (list result lst) (letrec ([f (lambda (result lst)
-                                                                  (let ([set (filter (compose not empty?) (g result lst))])
+                                                                  (let ([set (filter-empty (g result lst))])
                                                                     (if (empty? set) empty (append set (apply append (map (curry apply f) set))))))])                                                  
                                                       (f result lst)))))]
     [character 
@@ -184,7 +189,12 @@
                                           (#\> #\> #\> 'ushr)
                                           (#\> #\> #\> #\= 'ushreq))
                                          
-                                         
+                                         (list
+                                          (list (regex-or (list (regex-and (string->list "true")) (regex-and (string->list "false"))))
+                                                'bool-lit)
+                                          
+                                          (list (regex-and (string->list "null"))
+                                                'null-lit))
                                          ;;keywords
                                          (map (lambda (sym) (list (regex-and (string->list (symbol->string sym))) sym)) 
                                               '(abstract boolean break byte case catch char class const continue 
@@ -261,12 +271,7 @@
                                            'float-lit
                                            ))
                                          
-                                         (list
-                                          (list (regex-or (list (regex-and (string->list "true")) (regex-and (string->list "false"))))
-                                                'bool-lit)
-                                          
-                                          (list (regex-and (string->list "null"))
-                                                'null-lit))
+                                         
                                          
                                          
                                          (list 
@@ -450,6 +455,7 @@ is another string\\tliteral\""))
 
 (c-scanner (string->list "int id = x five"))
 
+
 (c-scanner (string->list "int id = x > y ? x : y"))
 
 (c-scanner (string->list "int main(void)
@@ -462,3 +468,6 @@ Array[i] = i + 0x9a;
 }
 return -1;
 }"))
+
+
+(java-scanner (string->list (read)))
