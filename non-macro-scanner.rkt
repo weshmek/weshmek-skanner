@@ -22,16 +22,14 @@
         (lambda (result lst)
           (let ([set (filter (compose not empty?) ((regex-helper (first regexes)) result lst))])
             (if (empty? set) empty (apply append (map (curry apply (regex-helper (regex-and (rest regexes)))) set)))))])]
-    
     [(regex-or regexes)
      (lambda (result lst)
        (foldr (lambda (f y) (append (f result lst) y)) empty (map regex-helper regexes)))]
-    
     [(regex-star regex) (let ([g (regex-helper regex)])
                           (lambda (result lst)
                             (cons (list result lst) (letrec ([f (lambda (result lst)
                                                                   (let ([set (filter (compose not empty?) (g result lst))])
-                                                                    (if (empty? set) empty (append set (apply append (map (curry apply f) set))))))])
+                                                                    (if (empty? set) empty (append set (apply append (map (curry apply f) set))))))])                                                  
                                                       (f result lst)))))]
     [character 
      ;(printf "regex-character ~a~n" character)
@@ -451,3 +449,16 @@ is another string\\tliteral\""))
 (c-scanner (string->list "if = > >> >>= _Imaginary"))
 
 (c-scanner (string->list "int id = x five"))
+
+(c-scanner (string->list "int id = x > y ? x : y"))
+
+(c-scanner (string->list "int main(void)
+{
+int i;
+int Array[10];
+for (i = 0; i < sizeof(Array) / sizeof(Array[0]); i++)
+{
+Array[i] = i + 0x9a;
+}
+return -1;
+}"))
