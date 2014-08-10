@@ -11,7 +11,7 @@
 (struct regex-star (regex))
 
 (define not-empty? (compose not empty?))
-(define filter-empty (curry filter (compose not empty?))) 
+(define filter-empty (curry filter not-empty?)) 
 
 
 
@@ -69,8 +69,10 @@
                                                        x y))
                                      (list (list empty lst) error-symbol)
                                      (map (lambda (pr) (list ((first pr) lst) (second pr))) regex-fns))])
-              (if (equal? (second next-token) error-symbol) (cons (list (first (first next-token)) error-symbol)
-                                                                  (cons (second (first next-token)) empty))
+              (if (equal? (second next-token) error-symbol) 
+                  (cons (list (first (first next-token)) error-symbol)
+                        (cons (second (first next-token)) empty))
+                  
                   (cons (list (first (first next-token)) (second next-token))  (helper (second (first next-token))))))]))
   helper)
 
