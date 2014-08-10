@@ -186,7 +186,12 @@
                                           (#\> #\> #\> 'ushr)
                                           (#\> #\> #\> #\= 'ushreq))
                                          
-                                         
+                                         (list
+                                          (list (regex-or (list (regex-and (string->list "true")) (regex-and (string->list "false"))))
+                                                'bool-lit)
+                                          
+                                          (list (regex-and (string->list "null"))
+                                                'null-lit))
                                          ;;keywords
                                          (map (lambda (sym) (list (regex-and (string->list (symbol->string sym))) sym)) 
                                               '(abstract boolean break byte case catch char class const continue 
@@ -263,12 +268,7 @@
                                            'float-lit
                                            ))
                                          
-                                         (list
-                                          (list (regex-or (list (regex-and (string->list "true")) (regex-and (string->list "false"))))
-                                                'bool-lit)
-                                          
-                                          (list (regex-and (string->list "null"))
-                                                'null-lit))
+                                         
                                          
                                          
                                          (list 
