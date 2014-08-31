@@ -476,5 +476,8 @@ Array[i] = i + 0x9a;
 return -1;
 }"))
 
+(java-scanner (list #\' #\\ #\e #\'))
+(java-scanner (list #\" #\\ #\e #\"))
 
+(java-scanner (list #\" #\\ #\t #\"))
 (java-scanner (string->list (read)))
