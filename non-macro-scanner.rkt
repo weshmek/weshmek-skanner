@@ -141,8 +141,8 @@
  [#\= 'eq]
  [#\= #\= 'eqeq])
 
-(define java-scanner (non-macro-scanner 'error 
-                                        (append
+(define java-tokens-regexes 
+  (append
                                          
                                          
                                          ;;separators
@@ -280,18 +280,22 @@
                                          (list 
                                           (list
                                            (regex-and 
-                                            (list #\" (regex-star (regex-or (append (list (regex-or (filter (lambda (c) (or (not (equal? c #\")) (not (equal? c #\\)))) 
+                                            (list #\" (regex-star (regex-or (append (list (regex-or (filter (lambda (c) (and (not (equal? c #\")) (not (equal? c #\\)))) 
                                                                                                             (regex-or-regexes all-ascii)))) (list escape-sequences))) ) #\"))
                                            'string-lit)
                                           (list 
                                            (regex-and
-                                            (list #\' (regex-or (append (list (regex-or (filter (lambda (c) (or (not (equal? c #\')) (not (equal? c #\\)))) (regex-or-regexes all-ascii)))) 
+                                            (list #\' (regex-or (append (list (regex-or (filter (lambda (c) (and (not (equal? c #\')) (not (equal? c #\\)))) (regex-or-regexes all-ascii)))) 
                                                                         (list escape-sequences)))  #\'))
                                            'char-lit))
                                          
                                          
                                          ;;whitespace
-                                         (list (list (regex-star (regex-or '(#\space #\newline #\tab #\return))) 'whitespace)))))
+                                         (list (list (regex-star (regex-or '(#\space #\newline #\tab #\return))) 'whitespace))))
+(define java-tokens (map second java-tokens-regexes))
+
+(define java-scanner (non-macro-scanner 'error 
+                                        java-tokens-regexes))
 
 
 
