@@ -1,6 +1,6 @@
 #lang racket
 
-;;Wesley Chalmers: This scanner works. It works better than the scanner we spent 30 hours working on. Good job.
+;;Wesley Chalmers: This scanner works. It works better than the scanner we spent 30 hours working on. Good job. Sincerely, Wesley Chalmers
 
 ;;The non-macro version may have advantages. Possibly, procedures aren't created unless they might be needed. 
 ;;We can use things like string->list and such to avoid writing the specific syntax
@@ -30,12 +30,13 @@
     [(regex-or regexes)
      (lambda (result lst)
        (foldr (lambda (f y) (append (f result lst) y)) empty (map regex-helper regexes)))]
-    [(regex-star regex) (let ([g (regex-helper regex)])
+    [(regex-star regex) 
                           (lambda (result lst)
-                            (cons (list result lst) (letrec ([f (lambda (result lst)
+                            (cons (list result lst) (letrec ([g (regex-helper regex)]
+                                                             [f (lambda (result lst)
                                                                   (let ([set (filter-empty (g result lst))])
-                                                                    (if (empty? set) empty (append set (apply append (map (curry apply f) set))))))])                                                  
-                                                      (f result lst)))))]
+                                                                    (if (empty? set) empty (apply append set (map (curry apply f) set)))))])                                                  
+                                                      (f result lst))))]
     [character 
      ;(printf "regex-character ~a~n" character)
      (lambda (result lst)
@@ -400,7 +401,7 @@ is another string\\tliteral\""))
                                        (#\) 'cparen)
                                        (#\{ 'ocurl)
                                        (#\} 'ccurl)
-                                       (#\. 'dot)
+                                       (#\. #\. #\. 'ellipsis)
                                        (#\- #\> 'arrow)
                                        (#\+ #\+ 'plusplus)
                                        (#\- #\- 'minusminus)
@@ -427,7 +428,7 @@ is another string\\tliteral\""))
                                        (#\? 'question)
                                        (#\: 'colon)
                                        (#\; 'semi)
-                                       (#\. #\. #\. 'elipsis)
+                                       (#\. 'dot)
                                        (#\= 'eq)
                                        (#\* #\= 'stareq)
                                        (#\/ #\= 'slasheq)
