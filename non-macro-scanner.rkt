@@ -4,6 +4,7 @@
 
 ;;The non-macro version may have advantages. Possibly, procedures aren't created unless they might be needed. 
 ;;We can use things like string->list and such to avoid writing the specific syntax
+(provide java-tokens)
 (struct regex-and (regexes))
 
 (struct regex-or (regexes))
@@ -118,7 +119,7 @@
                     (list
                      #\b #\t #\n #\f #\r #\" #\' #\\
                      (regex-and
-                      (list #\\ 
+                      (list 
                             (regex-or
                              (list
                               octal-digits
@@ -480,4 +481,12 @@ return -1;
 (java-scanner (list #\" #\\ #\e #\"))
 
 (java-scanner (list #\" #\\ #\t #\"))
-(java-scanner (string->list (read)))
+;(java-scanner (string->list (read)))
+
+
+(define-syntax (create-scanner stx)
+  (syntax-case stx (create-scanner)
+    
+    ((create-scanner scanner-name tokens-list-name regexes)
+     #'#,@#`((define tokens-list-name (map second regexes))
+             (define scanner-name (non-macro-scanner 'error regexes))))))
